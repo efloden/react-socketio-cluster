@@ -11,5 +11,8 @@ RUN npm install --prod
 # Bundle app source
 COPY . /usr/src/app
 
+# Build react app
+RUN npm run build
+
 EXPOSE 3000
 CMD [ "npm", "start" ]
