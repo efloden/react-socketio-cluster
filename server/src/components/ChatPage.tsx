@@ -1,13 +1,29 @@
+import { useRef, useEffect } from "react";
 import { Message } from ".";
 
 interface Props {
   logs: string[];
   messages: Message[];
-  setInputMessage: Function;
   submitMessage: Function;
 }
 
-function ChatPage({ logs, messages, setInputMessage, submitMessage }: Props) {
+function ChatPage({ logs, messages, submitMessage }: Props) {
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const focusInput = () => inputRef?.current?.focus();
+
+  // Focus the inputMessage input on mount
+  useEffect(() => focusInput(), []);
+
+  // Detect when the client submits a message using the ENTER key
+  const onKeyPress = ({ key }: React.KeyboardEvent<HTMLInputElement>) => {
+    if (inputRef!.current!.value === "") return;
+    if (key === "Enter") {
+      submitMessage(inputRef!.current!.value);
+      inputRef!.current!.value = "";
+    }
+  };
+
   return (
     <li className="chat page">
       <div className="chatArea">
@@ -29,10 +45,10 @@ function ChatPage({ logs, messages, setInputMessage, submitMessage }: Props) {
         </ul>
       </div>
       <input
+        ref={inputRef}
         className="inputMessage"
         placeholder="Type here..."
-        onKeyPress={({ key }) => key === "Enter" && submitMessage()}
-        onChange={(e) => setInputMessage(e.target.value)}
+        onKeyPress={onKeyPress}
       />
     </li>
   );

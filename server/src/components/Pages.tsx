@@ -9,9 +9,7 @@ interface Props {
 }
 
 function Pages({ socket }: Props) {
-  const [hasUsername, setHasUsername] = useState(false);
   const [username, setUsername] = useState("");
-  const [inputMessage, setInputMessage] = useState("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [logs, setLogs] = useState<string[]>([]);
 
@@ -32,15 +30,13 @@ function Pages({ socket }: Props) {
   );
 
   // When the client submits a username using the ENTER key
-  const submitUsername = () => {
-    if (username.length === 0) return;
+  const submitUsername = (username: string) => {
     socket.emit("add user", username);
-    setHasUsername(true);
+    setUsername(username);
   };
 
   // When the client submits a message using the ENTER key
-  const submitMessage = () => {
-    if (inputMessage.length === 0) return;
+  const submitMessage = (inputMessage: string) => {
     socket.emit("new message", inputMessage);
     addMessage({
       username: username,
@@ -49,10 +45,8 @@ function Pages({ socket }: Props) {
   };
 
   useEffect(() => {
-    console.log({ socket });
     // Whenever the server emits 'login', log the login message
     socket.on("login", (data: Login) => {
-      console.log("login");
       let message = "Welcome to Socket.IO Chat – ";
       if (data.numUsers === 1) {
         message += "there's 1 participant";
@@ -63,7 +57,6 @@ function Pages({ socket }: Props) {
     });
     // Whenever the server emits 'new message', update the chat body
     socket.on("new message", function (message: Message) {
-      console.log("new message");
       addMessage(message);
     });
     // Remove event listeners on cleanup
@@ -76,18 +69,14 @@ function Pages({ socket }: Props) {
   return (
     <div id="App">
       <ul className="pages">
-        {hasUsername ? (
+        {username ? (
           <ChatPage
             logs={logs}
             messages={messages}
-            setInputMessage={setInputMessage}
             submitMessage={submitMessage}
           />
         ) : (
-          <LoginPage
-            submitUsername={submitUsername}
-            setUsername={setUsername}
-          />
+          <LoginPage submitUsername={submitUsername} />
         )}
       </ul>
     </div>
