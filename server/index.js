@@ -2,7 +2,11 @@
 var express = require("express");
 var app = express();
 var server = require("http").createServer(app);
-var io = require("socket.io")(server);
+var io = require("socket.io")(server, {
+  cors: {
+    origin: "*",
+  },
+});
 var redis = require("socket.io-redis");
 var port = process.env.PORT || 3000;
 var serverName = process.env.NAME || "Unknown";
