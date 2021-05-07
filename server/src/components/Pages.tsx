@@ -64,22 +64,20 @@ function Pages({ socket }: Props) {
       socket.off("login");
       socket.off("new message");
     };
-  }, [socket]);
+  }, [addMessage, log, socket]);
 
   return (
-    <div id="App">
-      <ul className="pages">
-        {username ? (
-          <ChatPage
-            logs={logs}
-            messages={messages}
-            submitMessage={submitMessage}
-          />
-        ) : (
-          <LoginPage submitUsername={submitUsername} />
-        )}
-      </ul>
-    </div>
+    <ul className="pages">
+      {username ? (
+        <ChatPage
+          logs={logs}
+          messages={messages}
+          submitMessage={submitMessage}
+        />
+      ) : (
+        <LoginPage submitUsername={submitUsername} />
+      )}
+    </ul>
   );
 }
 
